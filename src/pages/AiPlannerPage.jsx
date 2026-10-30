@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { Modal } from '../components/ui/Modal';
+import { InputField } from '../components/ui/Input';
 import { Icon } from '../components/Icon';
 import { requestAiEventPlan, generateDemoAiPlan } from '../utils/aiService';
 
@@ -9,11 +11,16 @@ export function AiPlannerPage({
   activeEvent,
   onUpdateEvent,
   onOpenCreateEventModal,
-  onLoadSampleEvent
+  onLoadSampleEvent,
+  onNavigate
 }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isDemoModeActive, setIsDemoModeActive] = useState(false);
+  const [keyModalOpen, setKeyModalOpen] = useState(false);
+  const [customKey, setCustomKey] = useState(() =>
+    typeof window !== 'undefined' ? window.localStorage.getItem('pmc_ai_v1_gemini_key') || '' : ''
+  );
 
   if (!activeEvent) {
     return (
@@ -126,6 +133,15 @@ export function AiPlannerPage({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <Button
+            variant="subtle"
+            onClick={() => setKeyModalOpen(true)}
+            title="Configure or enter Gemini API key directly"
+          >
+            <Icon name="settings" size={16} />
+            <span>API Key</span>
+          </Button>
+
+          <Button
             variant="secondary"
             onClick={() => handleGeneratePlan(true)}
             disabled={loading}
@@ -147,8 +163,25 @@ export function AiPlannerPage({
 
       {/* Error or Notice Banner */}
       {errorMessage && (
-        <div className="budget-validation-alert" role="alert">
-          {errorMessage}
+        <div
+          className="budget-validation-alert"
+          role="alert"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 'var(--space-3)'
+          }}
+        >
+          <div style={{ flex: '1 1 300px' }}>{errorMessage}</div>
+          <Button
+            variant="primary"
+            onClick={() => setKeyModalOpen(true)}
+          >
+            <Icon name="sparkles" size={16} />
+            <span>Enter Gemini API Key</span>
+          </Button>
         </div>
       )}
 
@@ -382,6 +415,55 @@ export function AiPlannerPage({
           </div>
         </div>
       )}
+
+      {/* Gemini API Key Modal for Static / Client-Side Generations */}
+      <Modal
+        isOpen={keyModalOpen}
+        onClose={() => setKeyModalOpen(false)}
+        title="Gemini API Key Configuration"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setKeyModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  if (customKey.trim()) {
+                    window.localStorage.setItem('pmc_ai_v1_gemini_key', customKey.trim());
+                  } else {
+                    window.localStorage.removeItem('pmc_ai_v1_gemini_key');
+                  }
+                }
+                setKeyModalOpen(false);
+                if (customKey.trim()) {
+                  handleGeneratePlan(false);
+                }
+              }}
+            >
+              <span>Save & Generate Plan</span>
+            </Button>
+          </>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>
+            Your API key is saved strictly on your local browser (in <code>localStorage</code>) and used for direct
+            Live AI generation. This allows the app to generate Live AI plans even on static hosts (like Render Static Site)
+            without requiring an Express backend server.
+          </p>
+          <InputField
+            id="modal-gemini-key"
+            label="Google Gemini API Key"
+            type="password"
+            placeholder="AQ... or AIzaSy..."
+            value={customKey}
+            onChange={(e) => setCustomKey(e.target.value)}
+            hint="Paste your Gemini key here. It remains on your device."
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -166,6 +166,7 @@ export function App() {
           onUpdateEvent={handleUpdateActiveEvent}
           onOpenCreateEventModal={() => handleOpenCreateModal('')}
           onLoadSampleEvent={handleLoadSampleEvent}
+          onNavigate={(pageId) => setActivePageId(pageId)}
         />
       );
     }
