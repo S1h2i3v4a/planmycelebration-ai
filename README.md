@@ -1,92 +1,170 @@
 # PlanMyCelebration AI
 
-**PromptWars 2026 — Main Challenge 05: Celebration & Event Planner**
-
-PlanMyCelebration AI is a production-inspired SaaS web application designed to help people plan weddings, milestone birthdays, anniversaries, college festivals, and community events in one organized workspace.
-
----
-
-## Features & Screens
-
-1. **Landing & Welcome Screen:** Product introduction, empty state, and 3 category previews.
-2. **Overview Dashboard:** Personalized greeting, 4 summary metric cards, task/budget progress bars, and recent event switcher.
-3. **Event Creation Wizard:** 4-step guided form with inline validation, currency selection, and priority weighting.
-4. **AI Event Planner:** Secure backend integration with Google Gemini (`gemini-2.5-flash`) and an honest offline Demo Mode.
-5. **Budget Management:** Dedicated INR ledger with auto-balancing, stacked visual allocation bars, and over-budget warning banners.
-6. **Timeline & Task Management:** 5-phase preparation schedule with status filters and relative date calculation.
-7. **Vendor Shortlist:** Venue and service provider comparison with quotation tracking and essential checklist questions.
-8. **Settings & About:** Local storage metrics, JSON backup export, and data erasure controls.
+> **PromptWars 2026 — Main Challenge 05: Celebration & Event Planner**  
+> An intelligent, single-workspace event management web application for orchestrating weddings, milestone birthdays, anniversaries, and community celebrations.
 
 ---
 
-## Technology Stack
+## 🌐 Live Demo & Repository
 
-- **Frontend:** React 18, Vite 5, JavaScript (ESM).
-- **Styling:** Modular CSS custom properties with warm ivory canvas, deep plum primary, and muted coral accents.
-- **Backend:** Node.js & Express server proxying Google Gen AI SDK (`@google/genai`).
-- **Persistence:** LocalStorage (`pmc_ai_v1_*`) with defensive sanitization.
+* **Deployed Website:** `[https://your-deployed-app.onrender.com]` *(Replace with your live Render URL)*
+* **GitHub Repository:** [https://github.com/S1h2i3v4a/planmycelebration-ai](https://github.com/S1h2i3v4a/planmycelebration-ai)
+* **Demo Video:** `[https://youtu.be/your-video-link]` *(Replace with your unlisted video URL)*
 
 ---
 
-## Local Setup & Installation
+## 📌 Problem & Solution
+
+### The Problem
+Organizing a milestone celebration—whether an intimate 50-guest anniversary or a 500-guest community festival—is fragmented and chaotic:
+* Critical event details are scattered across chat threads, notes apps, and messy spreadsheets.
+* Unmonitored expenses lead to sudden budget overruns and unexpected vendor costs.
+* Organizers lack a structured roadmap, leading to forgotten milestones, rushed vendor bookings, and last-minute panic.
+
+### The Solution
+**PlanMyCelebration AI** brings the entire planning lifecycle into one cohesive workspace:
+1. **Guided 4-Step Event Wizard** to define scope, master budget cap, and priorities.
+2. **Generative AI Event Planner** powered by Google Gemini to synthesize bespoke themes, preparation roadmaps, and category budget ratios.
+3. **Auto-Balancing Budget Manager** with category breakdowns, paid/unpaid tracking, and visual over-budget warning alerts.
+4. **Phased Milestone Checklist** with date countdown offsets.
+5. **Vendor Shortlist Comparison** with quote tracking and negotiation questions.
+6. **100% Private Local Storage Persistence** with single-click JSON backup export.
+
+### Target Users
+* **Couples & Families** coordinating weddings, milestone birthdays, and family reunions.
+* **Community Organizers & Student Committees** planning cultural festivals, galas, and college celebrations.
+* **Independent Event Coordinators** needing a lightweight, zero-bloat planning tool.
+
+---
+
+## ✨ Implemented Core Features
+
+| Feature | Implementation Details |
+| :--- | :--- |
+| **Guided Event Wizard** | 4-step modal with real-time validation, multi-currency support (INR ₹, USD $, EUR €, GBP £), and priority weighting. |
+| **AI Event Planner** | Generates concept title, executive summary, theme directions, 4-phase preparation roadmap, suggested activities, and budget percentage advice. |
+| **Honest Mode Toggle** | Clearly displays **"Live AI Generated"** (coral) vs. **"Demo Mode (Offline Sample)"** (gold) badges. Allows 1-click demo plan loading. |
+| **Overview Dashboard** | Real-time metric cards (Days Remaining, Budget Cap vs. Allocated, Paid vs. Pending, Task Progress) and recent event switcher. |
+| **Budget Manager** | Auto-balancing ledger with category breakdowns (Venue, Catering, Decor, Photography, Buffer), paid status toggles, and over-budget alert banners. |
+| **Timeline & Tasks** | 5-phase preparation checklist (Initial Planning, Bookings, Preparation, Final Checks, Wrap Up) with completion counters and custom task additions. |
+| **Vendor Shortlist** | Side-by-side vendor evaluation, price quotation comparisons, booking status badges, and vendor interview checklist questions. |
+| **Data Portability** | Full JSON backup export, browser storage statistics, and safe data erasure modal. |
+
+---
+
+## 🤖 Actual GenAI Integration Disclosure
+
+* **Active Models:** Google Gemini (`gemini-3.5-flash-lite`, `gemini-flash-latest`, and `gemini-3.8-flash`) via the official `@google/genai` SDK and Generative Language REST endpoints.
+* **Architecture:** The application employs a secure dual-path architecture:
+  1. **Primary Backend Path:** The Express server (`/api/ai-plan`) proxies requests to Google Gemini, keeping credentials secure on the server.
+  2. **Zero-Friction Fallback:** If the backend server is sleeping or unavailable (e.g. static hosting on CDN), the app seamlessly executes client-side generation without crashing.
+* **Offline Demo Mode:** When completely offline or if API limits are reached, the application falls back gracefully to pre-packaged, domain-accurate sample plans. The UI transparently identifies offline data with a gold **Demo Mode (Offline Sample)** badge.
+
+---
+
+## 🛠️ Technology Stack
+
+* **Frontend:** React 18, Vite 5, JavaScript (ES Modules).
+* **Styling:** Custom Modular CSS Architecture (`tokens.css`, `global.css`) utilizing WCAG AA-compliant variables (Warm Ivory canvas `#FAF7F2`, Deep Plum primary `#4A2545`, Muted Coral `#D96B52`).
+* **Backend:** Node.js, Express 5, CORS, Dotenv.
+* **AI SDK:** Google Gen AI SDK (`@google/genai`).
+* **Persistence:** Browser `localStorage` (`pmc_ai_v1_*`) with automated sanitization.
+* **Icons & UI:** Custom inline SVG icon system (`Icon.jsx`). Zero heavy third-party UI dependencies.
+
+---
+
+## 🚀 Local Setup & Installation
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- npm
+* **Node.js:** v18.0.0 or higher
+* **npm:** v9.0.0 or higher
 
-### Installation Commands
-
+### 1. Clone the Repository
 ```bash
-# 1. Navigate to the project directory
-cd "virtual prompt war"
+git clone https://github.com/S1h2i3v4a/planmycelebration-ai.git
+cd planmycelebration-ai
+```
 
-# 2. Install dependencies
+### 2. Install Dependencies
+```bash
 npm install
-
-# 3. Configure environment variables (optional for live AI mode)
-cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
 ```
 
-### Running the Application
-
+### 3. Configure Environment Variables
+Create a `.env` file in the project root:
 ```bash
-# Option A: Run frontend Vite dev server only (Demo Mode active)
-npm run dev
+cp .env.example .env
+```
+Populate `.env` with your Google Gemini API key:
+```env
+# Google Gemini API Key
+GEMINI_API_KEY=your_gemini_api_key_here
 
-# Option B: Run Express backend + frontend concurrently (Live AI mode)
-npm run server
-# In another terminal:
-npm run dev
+# Port for Express server
+PORT=3001
 ```
 
-Open `http://localhost:5173` in your browser.
+### 4. Run the Application
+
+#### Option A: Unified Full-Stack Mode (Recommended)
+Build the frontend and run the Express server (serves both frontend and API on port 3001):
+```bash
+npm run build
+npm start
+```
+Open [http://localhost:3001](http://localhost:3001) in your browser.
+
+#### Option B: Independent Vite Dev Mode
+Run the Express backend:
+```bash
+npm run server
+```
+In a separate terminal, launch Vite dev server:
+```bash
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## Testing & Acceptance Criteria
+## 🧪 Testing & Verification
 
-- **App Initialization:** Starts without build errors.
-- **Persistence:** Created events and task progress persist after refreshing the browser (`localStorage`).
-- **Calculations:** Budget totals and task progress percentages recalculate instantly and consistently across the Dashboard, Budget, and My Events pages.
-- **AI & Demo Mode:** Gracefully handles missing API keys by falling back to Demo Mode without crashing.
+1. **Production Build Verification:**
+   ```bash
+   npm run build
+   ```
+   *Expected outcome:* Builds successfully with zero syntax or bundling errors.
+
+2. **Persistence Test:**
+   * Create an event using the guided wizard.
+   * Add a custom budget expense and check off a task in Timeline.
+   * Refresh the browser (`F5`).
+   * *Expected outcome:* All events, budget ledgers, and task completion states persist accurately.
+
+3. **AI Generation & Fallback Test:**
+   * Navigate to the **AI Planner** page.
+   * Click **"Generate AI Plan"** — verifies live synthesis.
+   * Click **"Load Demo Plan"** — verifies offline demo mode and badge switching.
+
+4. **Calculation Consistency Test:**
+   * Add an expense that exceeds the event's master budget cap.
+   * *Expected outcome:* The progress bar turns red, and an over-budget alert banner displays on both Dashboard and Budget screens.
 
 ---
 
-## Deployment on Render
+## ⚠️ Known Limitations & Future Improvements
 
-### Option A: Unified Full-Stack Web Service (Recommended)
-Deploy both the React frontend and Express Gemini backend together in a single Render Web Service:
-1. Create a new **Web Service** on Render and connect your repository: `https://github.com/S1h2i3v4a/planmycelebration-ai`.
-2. Configure settings:
-   - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm start`
-3. In **Environment Variables**, add:
-   - `GEMINI_API_KEY`: Your Google Gemini API Key
-4. Deploy! The unified server will serve both the React web application and the `/api/ai-plan` route.
+### Current Limitations
+* **Local Device Storage:** Workspace data is stored in the browser's `localStorage`; data does not automatically sync across different devices without exporting the JSON backup.
+* **Single Active Currency per Event:** Currencies are assigned per event workspace rather than supporting multi-currency exchange conversion within a single budget.
 
-### Option B: Static Site + Client-Side API Key
-If deploying as a **Render Static Site**:
-1. Build Command: `npm run build`, Publish Directory: `dist`.
-2. In the deployed web application, open **Settings**, paste your Gemini API Key into the **Gemini API Key** field, and click **Save Key**. The app will generate live AI plans directly from the browser!
+### Future Roadmap
+* **Cloud Database Sync:** User authentication and multi-user workspace sharing via PostgreSQL / Supabase.
+* **Automated PDF Itinerary Export:** One-click downloadable run-of-show schedules for coordinators and photographers.
+* **Direct Vendor Inquiries:** Automated email draft generation populated with event specs and shortlist questions.
+
+---
+
+## 📄 License
+
+Built for **PromptWars 2026 Challenge 05**. Distributed under the MIT License.
