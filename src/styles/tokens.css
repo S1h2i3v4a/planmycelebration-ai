@@ -1,0 +1,85 @@
+:root {
+  /* Surface Palette — Warm Ivory & Soft Neutrals */
+  --bg-canvas: #FAF7F2;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F3EFE6;
+  --bg-elevated: #FFFDF9;
+  --bg-sidebar: #23162B;
+  --bg-sidebar-hover: #32203D;
+  --bg-sidebar-active: #432B52;
+
+  /* Brand Primary — Deep Plum / Sophisticated Purple */
+  --color-primary: #4A2545;
+  --color-primary-hover: #381B34;
+  --color-primary-active: #291226;
+  --color-primary-soft: #F4ECF2;
+  --color-primary-border: #D9C3D5;
+
+  /* Accent — Restrained Muted Coral & Warm Gold */
+  --color-accent: #D96B52;
+  --color-accent-hover: #C25840;
+  --color-accent-soft: #FDF0EC;
+  --color-gold: #B8860B;
+  --color-gold-soft: #FBF6E8;
+
+  /* Typography Colors (WCAG AA/AAA Verified on Warm Ivory) */
+  --text-primary: #1F1924;
+  --text-secondary: #574E5E;
+  --text-muted: #786F80;
+  --text-on-primary: #FFFFFF;
+  --text-on-sidebar: #F5F0F6;
+  --text-on-sidebar-muted: #BCAEC2;
+
+  /* Semantic Status Colors */
+  --status-info-bg: #EEF2F8;
+  --status-info-text: #284B7A;
+  --status-success-bg: #EBF5EE;
+  --status-success-text: #1F5E3B;
+  --status-warning-bg: #FDF4E7;
+  --status-warning-text: #8C5811;
+  --status-danger-bg: #FDECEB;
+  --status-danger-text: #9E2A25;
+
+  /* Borders & Dividers */
+  --border-subtle: #E6E0D6;
+  --border-strong: #CFC6B8;
+  --focus-ring: 0 0 0 3px rgba(74, 37, 69, 0.28);
+
+  /* Elevation / Restrained Shadows */
+  --shadow-xs: 0 1px 2px rgba(31, 25, 36, 0.04);
+  --shadow-sm: 0 2px 6px rgba(31, 25, 36, 0.06);
+  --shadow-md: 0 8px 24px rgba(31, 25, 36, 0.10);
+
+  /* Border Radius Scale */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 9999px;
+
+  /* Consistent Spacing Scale */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+
+  /* Typography Scale */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 0.9375rem; /* 15px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.375rem;    /* 22px */
+  --text-2xl: 1.75rem;    /* 28px */
+
+  /* Layout Dimensions */
+  --sidebar-width: 264px;
+  --topbar-height: 64px;
+  --content-max-width: 1140px;
+}
