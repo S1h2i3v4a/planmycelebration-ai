@@ -1,15 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static assets from Vite production build if available
+const distPath = path.join(__dirname, 'dist');
+app.use(express.static(distPath));
 
 // Initialize Google Gen AI client securely on the server
 const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
@@ -138,6 +147,24 @@ Ensure the output is valid JSON without markdown wrapping or backticks.`;
       details: err.message
     });
   }
+});
+
+// Health check endpoint for deployment monitoring
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'PlanMyCelebration AI Backend',
+    aiConfigured: Boolean(process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Client-side SPA routing fallback: serve index.html for non-API requests
+app.use((req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 app.listen(PORT, () => {

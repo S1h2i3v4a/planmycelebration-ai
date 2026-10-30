@@ -73,11 +73,20 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## Deployment Instructions
+## Deployment on Render
 
-1. **Build the production frontend assets:**
-```bash
-npm run build
-```
-2. **Deploy the Express backend (`server.js`)** to a Node.js hosting provider (Render, Railway, Fly.io) with `GEMINI_API_KEY` set in the environment variables.
-3. **Deploy the static `dist/` frontend bundle** to Vercel, Netlify, or GitHub Pages.
+### Option A: Unified Full-Stack Web Service (Recommended)
+Deploy both the React frontend and Express Gemini backend together in a single Render Web Service:
+1. Create a new **Web Service** on Render and connect your repository: `https://github.com/S1h2i3v4a/planmycelebration-ai`.
+2. Configure settings:
+   - **Environment:** `Node`
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `npm start`
+3. In **Environment Variables**, add:
+   - `GEMINI_API_KEY`: Your Google Gemini API Key
+4. Deploy! The unified server will serve both the React web application and the `/api/ai-plan` route.
+
+### Option B: Static Site + Client-Side API Key
+If deploying as a **Render Static Site**:
+1. Build Command: `npm run build`, Publish Directory: `dist`.
+2. In the deployed web application, open **Settings**, paste your Gemini API Key into the **Gemini API Key** field, and click **Save Key**. The app will generate live AI plans directly from the browser!

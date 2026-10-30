@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { InputField } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Icon } from '../components/Icon';
 import { loadSavedEvents } from '../utils/storage';
@@ -9,6 +10,32 @@ import { loadSavedEvents } from '../utils/storage';
 export function SettingsPage() {
   const [clearModalOpen, setClearModalOpen] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
+  const [geminiKeyInput, setGeminiKeyInput] = useState(
+    () => (typeof window !== 'undefined' ? window.localStorage.getItem('pmc_ai_v1_gemini_key') || '' : '')
+  );
+  const [keySavedMsg, setKeySavedMsg] = useState(false);
+
+  const handleSaveGeminiKey = (e) => {
+    e.preventDefault();
+    if (typeof window !== 'undefined') {
+      if (geminiKeyInput.trim()) {
+        window.localStorage.setItem('pmc_ai_v1_gemini_key', geminiKeyInput.trim());
+      } else {
+        window.localStorage.removeItem('pmc_ai_v1_gemini_key');
+      }
+      setKeySavedMsg(true);
+      setTimeout(() => setKeySavedMsg(false), 3000);
+    }
+  };
+
+  const handleClearGeminiKey = () => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('pmc_ai_v1_gemini_key');
+      setGeminiKeyInput('');
+      setKeySavedMsg(true);
+      setTimeout(() => setKeySavedMsg(false), 3000);
+    }
+  };
 
   const handleExportData = () => {
     try {
@@ -127,8 +154,60 @@ export function SettingsPage() {
           </Card>
         </div>
 
-        {/* Right Column: Data Management & Storage Statistics */}
+        {/* Right Column: AI Configuration & Data Management */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+          <Card style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h3>Gemini API Key</h3>
+              <Badge variant={geminiKeyInput.trim() ? 'success' : 'neutral'}>
+                {geminiKeyInput.trim() ? 'Configured' : 'Optional'}
+              </Badge>
+            </div>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+              If your backend server is offline or deployed as a static site (e.g. Render Static Site),
+              you can save your Gemini API key here. It is saved directly to your browser's private
+              localStorage and never uploaded anywhere.
+            </p>
+
+            <form onSubmit={handleSaveGeminiKey} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              <InputField
+                id="gemini-key-input"
+                label="Gemini API Key"
+                type="password"
+                placeholder="AQ... or AIzaSy..."
+                value={geminiKeyInput}
+                onChange={(e) => setGeminiKeyInput(e.target.value)}
+                hint="Used for client-side direct Live AI generation."
+              />
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <Button type="submit" variant="primary">
+                  <Icon name="check" size={16} />
+                  <span>Save Key</span>
+                </Button>
+                {geminiKeyInput && (
+                  <Button type="button" variant="subtle" onClick={handleClearGeminiKey}>
+                    <span>Remove</span>
+                  </Button>
+                )}
+              </div>
+            </form>
+
+            {keySavedMsg && (
+              <div
+                style={{
+                  padding: 'var(--space-2) var(--space-3)',
+                  backgroundColor: 'var(--status-success-bg)',
+                  color: 'var(--status-success-text)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: 'var(--text-xs)',
+                  fontWeight: 600
+                }}
+              >
+                ✓ Key preference updated!
+              </div>
+            )}
+          </Card>
+
           <Card style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             <h3>Browser Storage Statistics</h3>
             <div className="event-card-stats">

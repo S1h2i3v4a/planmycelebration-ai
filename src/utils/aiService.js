@@ -1,11 +1,16 @@
 /**
- * AI Service helper supporting secure backend API calls and
- * clearly labeled offline Demo Mode.
+ * AI Service helper supporting secure backend API calls, direct client-side
+ * API fallback, and clearly labeled offline Demo Mode.
  */
 
 export async function requestAiEventPlan(event) {
+  const apiBase = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const endpoint = `${apiBase}/api/ai-plan`;
+
+  let backendError = null;
+
   try {
-    const res = await fetch('/api/ai-plan', {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -21,12 +26,30 @@ export async function requestAiEventPlan(event) {
       })
     });
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || `Server responded with status ${res.status}`);
+    const rawText = await res.text();
+
+    if (!rawText || !rawText.trim()) {
+      throw new Error(
+        'Server returned an empty response. If using Render, ensure the Web Service is running and GEMINI_API_KEY is configured in Environment Variables.'
+      );
     }
 
-    const data = await res.json();
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      if (rawText.trim().startsWith('<')) {
+        throw new Error(
+          'API endpoint returned HTML instead of JSON. Ensure the backend is deployed as a Web Service on Render, not a Static Site.'
+        );
+      }
+      throw new Error('Invalid JSON format received from server.');
+    }
+
+    if (!res.ok) {
+      throw new Error(data.error || `Server responded with status ${res.status}`);
+    }
+
     if (!data.success || !data.plan) {
       throw new Error('Invalid response structure received from AI service.');
     }
@@ -37,16 +60,120 @@ export async function requestAiEventPlan(event) {
       plan: { ...data.plan, isDemo: false, mode: 'live-ai' }
     };
   } catch (err) {
+    backendError = err.message;
     console.warn(
-      'Live AI endpoint unavailable or failed. Falling back to Demo Mode:',
-      err.message
+      'Live AI backend endpoint unavailable or failed. Checking client fallback:',
+      backendError
     );
-    return {
-      success: false,
-      error: err.message,
-      demoPlan: generateDemoAiPlan(event)
-    };
   }
+
+  // Client-side fallback check:
+  // If client-side key exists (in localStorage or VITE_GEMINI_API_KEY), generate directly
+  const clientKey =
+    (typeof window !== 'undefined' && window.localStorage.getItem('pmc_ai_v1_gemini_key')) ||
+    import.meta.env.VITE_GEMINI_API_KEY;
+
+  if (clientKey) {
+    try {
+      const plan = await generatePlanDirectWithKey(event, clientKey);
+      return {
+        success: true,
+        mode: 'live-ai',
+        plan: { ...plan, isDemo: false, mode: 'live-ai' }
+      };
+    } catch (clientErr) {
+      console.warn('Client-side Gemini generation failed:', clientErr.message);
+      backendError = `${backendError} | Client API: ${clientErr.message}`;
+    }
+  }
+
+  return {
+    success: false,
+    error: backendError || 'Unknown error occurred.',
+    demoPlan: generateDemoAiPlan(event)
+  };
+}
+
+async function generatePlanDirectWithKey(event, apiKey) {
+  const prompt = `You are a senior event planner and UX architect for PlanMyCelebration AI.
+Generate a structured, professional event plan for the following celebration:
+- Event Name: ${event.name}
+- Event Type: ${event.type}
+- Target Date: ${event.date || 'Not specified'}
+- Location: ${event.location || 'Not specified'}
+- Guest Count: ${event.guestCount || 100}
+- Theme / Style: ${event.theme || 'Warm Contemporary'}
+- Total Budget: ${event.totalBudget || 500000} ${event.currency || 'INR'}
+- Priorities: ${Array.isArray(event.priorities) ? event.priorities.join(', ') : 'None specified'}
+
+Return ONLY a valid JSON object matching this exact schema:
+{
+  "conceptTitle": "Catchy event subtitle or concept title",
+  "executiveSummary": "2-3 sentences describing the overarching atmosphere and guest experience.",
+  "themeIdeas": [
+    { "title": "Idea 1 title", "description": "Details..." },
+    { "title": "Idea 2 title", "description": "Details..." }
+  ],
+  "preparationPhases": [
+    {
+      "phase": "Initial Planning",
+      "focus": "Key milestone focus...",
+      "keyActions": ["Action 1", "Action 2"]
+    },
+    {
+      "phase": "Bookings",
+      "focus": "Key milestone focus...",
+      "keyActions": ["Action 1", "Action 2"]
+    },
+    {
+      "phase": "Preparation",
+      "focus": "Key milestone focus...",
+      "keyActions": ["Action 1", "Action 2"]
+    },
+    {
+      "phase": "Final Checks",
+      "focus": "Key milestone focus...",
+      "keyActions": ["Action 1", "Action 2"]
+    }
+  ],
+  "suggestedActivities": [
+    { "title": "Activity 1", "description": "Details..." }
+  ],
+  "budgetAllocationAdvice": [
+    { "category": "Venue & Rentals", "suggestedPct": 25, "rationale": "Why..." }
+  ],
+  "practicalTips": [
+    "Tip 1...",
+    "Tip 2..."
+  ]
+}
+Ensure the output is valid JSON without markdown wrapping or backticks.`;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }]
+    })
+  });
+
+  if (!res.ok) {
+    const errObj = await res.json().catch(() => ({}));
+    throw new Error(errObj.error?.message || `HTTP ${res.status}`);
+  }
+
+  const data = await res.json();
+  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const fenceMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  const candidateJson = fenceMatch ? fenceMatch[1] : rawText;
+  const jsonStart = candidateJson.indexOf('{');
+  const jsonEnd = candidateJson.lastIndexOf('}');
+  const cleanJson =
+    jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart
+      ? candidateJson.slice(jsonStart, jsonEnd + 1)
+      : candidateJson.trim();
+  return JSON.parse(cleanJson);
 }
 
 export function generateDemoAiPlan(event) {
