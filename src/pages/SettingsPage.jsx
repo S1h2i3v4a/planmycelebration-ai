@@ -101,26 +101,6 @@ export function SettingsPage() {
               </p>
             </div>
           </Card>
-
-          <Card style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <h3>Local Storage Persistence</h3>
-            <p style={{ fontSize: 'var(--text-sm)' }}>
-              All celebration workspaces, budget ledgers, and task checklists are stored strictly
-              in your browser's <code>localStorage</code> (<code>pmc_ai_v1_*</code>).
-            </p>
-            <div
-              style={{
-                padding: 'var(--space-3)',
-                backgroundColor: 'var(--bg-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: 'var(--text-xs)',
-                color: 'var(--text-secondary)'
-              }}
-            >
-              <strong>Privacy Notice:</strong> Your data remains entirely on your device and is never
-              synced to external cloud databases unless you export backup files manually.
-            </div>
-          </Card>
         </div>
 
         {/* Right Column: Data Management & Storage Statistics */}
