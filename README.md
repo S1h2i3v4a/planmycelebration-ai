@@ -7,7 +7,7 @@
 
 ## 🌐 Live Demo & Repository
 
-* **Deployed Website:** `[https://your-deployed-app.onrender.com]` *(Replace with your live Render URL)*
+* **Deployed Website:** `[https://planmycelebration-ai.onrender.com]` *(Replace with your live Render URL)*
 * **GitHub Repository:** [https://github.com/S1h2i3v4a/planmycelebration-ai](https://github.com/S1h2i3v4a/planmycelebration-ai)
 * **Demo Video:** `[https://youtu.be/your-video-link]` *(Replace with your unlisted video URL)*
 
